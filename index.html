@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Movie Information Form</title>
+</head>
+<body>
+	<h2>Movie Information Form</h2>
+	<form method="post" action="/">
+		<label for="title">Title:</label><br>
+		<input type="text" id="title" name="title" required><br>
+
+		<label for="releasedate">Release Date:</label><br>
+		<input type="date" id="releasedate" name="releasedate" required><br>
+
+		<label for="summary">Summary:</label><br>
+		<textarea id="summary" name="summary" required></textarea><br>
+
+        <label for="storyline">storyline :</label><br>
+		<textarea id="storyline" name="storyline" required></textarea><br>
+
+		<label for="genre">Genre:</label><br>
+		<input type="checkbox" id="action" name="genre" value="Action">
+		<label for="action">Action</label><br>
+		<input type="checkbox" id="comedy" name="genre" value="Comedy">
+		<label for="comedy">Comedy</label><br>
+		<input type="checkbox" id="drama" name="genre" value="Drama">
+		<label for="drama">Drama</label><br>
+
+		<label for="language">Language:</label><br>
+		<input type="checkbox" id="english" name="language" value="English">
+		<label for="english">English</label><br>
+		<input type="checkbox" id="spanish" name="language" value="Spanish">
+		<label for="spanish">Spanish</label><br>
+		<input type="checkbox" id="french" name="language" value="French">
+		<label for="french">French</label><br>
+
+		<label for="runtime">Runtime (in seconds):</label><br>
+		<input type="number" id="runtime" name="runtime" required><br>
+
+		<label for="videos">Videos:</label><br>
+		<input type="text" id="videos" name="videos[]" required><br>
+
+		<label for="photos">Photos:</label><br>
+		<input type="text" id="photos" name="photos[]" required><br>
+
+		<label for="awards">Awards:</label><br>
+		<input type="text" id="awards" name="awards[]" required><br>
+
+		<label for="castname">Cast Name:</label><br>
+		<input type="text" id="castname" name="castname[]" required><br>
+
+		<label for="castphoto">Cast Photo:</label><br>
+		<input type="text" id="castphoto" name="castphoto[]" required><br>
+
+		<label for="directorname">Director Name:</label><br>
+		<input type="text" id="directorname" name="directorname[]" required><br>
+
+		<label for="directorphoto">Director Photo:</label><br>
+		<input type="text" id="directorphoto" name="directorphoto[]" required><br>
+
+		<label for="writername">Writer Name:</label><br>
+		<input type="text" id="writername" name="writername[]" required><br>
+
+		<label for="writerphoto">Writer Photo:</label><br>
+		<input type="text" id="writerphoto" name="writerphoto[]" required><br>
+
+		<label for="budget">Budget:</label><br>
+		<input type="text" id="budget" name="budget" required><br>
+
+        <label for="boxofficecollection">boxofficecollection :</label><br>
+        <input type="text" id="boxofficecollection" name="boxofficecollection"><br>
+
+        <label for="region">region / origin country:</label><br>
+        <input type="text" id="region" name="region"><br>
+
+        <input type="submit" value="Submit"><br>
+
+    </form>
+</body>
+</html>
+
+<script>
+const form = document.querySelector('form');
+
+form.addEventListener('submit', (event) => {
+  event.preventDefault();
+
+  const title = document.getElementById('title').value;
+  const releasedate = document.getElementById('releasedate').value;
+  const summary = document.getElementById('summary').value;
+  const storyline = document.getElementById('storyline').value;
+  const runtime = document.getElementById('runtime').value;
+  const budget = document.getElementById('budget').value;
+  const boxofficecollection = document.getElementById('boxofficecollection').value;
+  const region = document.getElementById('region').value;
+
+  const genreCheckboxes = document.getElementsByName('genre');
+  const genres = [];
+
+  genreCheckboxes.forEach((checkbox) => {
+    if (checkbox.checked) {
+      genres.push(checkbox.value);
+    }
+  });
+
+  const languageCheckboxes = document.getElementsByName('language');
+  const languages = [];
+
+  languageCheckboxes.forEach((checkbox) => {
+    if (checkbox.checked) {
+      languages.push(checkbox.value);
+    }
+  });
+
+  const videos = document.getElementById('videos').value.split(",");
+  const photos = document.getElementById('photos').value.split(",");
+  const awards = document.getElementById('awards').value.split(",");
+  const castnames = document.getElementById('castname').value.split(",");
+  const castphotos = document.getElementById('castphoto').value.split(",");
+  const directornames = document.getElementById('directorname').value.split(",");
+  const directorphotos = document.getElementById('directorphoto').value.split(",");
+  const writernames = document.getElementById('writername').value.split(",");
+  const writerphotos = document.getElementById('writerphoto').value.split(",");
+
+  const movie = {
+    title: title,
+    releasedate: releasedate,
+    summary: summary,
+    storyline : storyline,
+    genres: genres,
+    languages: languages,
+    runtime: runtime,
+    videos: videos,
+    photos: photos,
+    awards: awards,
+    cast: [],
+    director: [],
+    writer: [],
+    budget: budget,
+    boxofficecollection: boxofficecollection,
+    region: region
+  };
+
+  castnames.forEach((name, index) => {
+    movie.cast.push({ name: name, photo: castphotos[index] });
+  });
+  directornames.forEach((name, index) => {
+    movie.director.push({ name: name, photo: directorphotos[index] });
+  });
+  writernames.forEach((name, index) => {
+    movie.writer.push({ name: name, photo: writerphotos[index] });
+  });
+//   const jsonData = JSON.stringify(movie);
+  
+//   console.log(jsonData);
+fetch('/', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(movie),
+  })
+    .then((response) => {
+      if (response.ok) {
+        console.log('Movie data sent successfully');
+       console.log(response);
+        // Handle the response
+      } else {
+        console.error('Error sending movie data');
+        // Handle the error appropriately
+      }
+    })
+    .catch((error) => {
+      console.error('Error sending movie data:', error);
+      // Handle the error appropriately
+    });
+
+});
+
+
+</script>
